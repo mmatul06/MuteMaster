@@ -1,26 +1,27 @@
 # Build output
-bin
-obj
-out
+bin/
+obj/
+out/
 
 # Visual Studio
-.vs
-.user
-.suo
-.userosscache
-.sln.docstates
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+Properties/PublishProfiles/
 
 # Publish output
-publish
+publish/
 
 # Debug symbols
-.pdb
+*.pdb
 
 # NuGet packages (restored automatically on build)
-packages
-.nupkg
-.nuget.props
-.nuget.targets
+packages/
+*.nupkg
+*.nuget.props
+*.nuget.targets
 
 # User-specific settings
 launchSettings.json
@@ -31,4 +32,4 @@ Thumbs.db
 desktop.ini
 
 # Rider IDE
-.idea
+.idea/
