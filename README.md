@@ -2,6 +2,12 @@
 
 First public release of MuteMaster — a lightweight Windows utility for global mic and speaker mute control.
 
+## Screenshots
+
+![Overlay](Screenshots/overlay.png)
+![Settings](Screenshots/settings.png)
+![About](Screenshots/about.png)
+
 ### Features
 - System-wide microphone and speaker mute via hotkeys
 - Customizable always-on-top overlay with real-time mic level bars
