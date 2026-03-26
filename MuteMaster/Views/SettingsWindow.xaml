@@ -1,0 +1,566 @@
+<Window x:Class="MuteMaster.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MuteMaster — Settings"
+        Width="720" Height="640"
+        MinWidth="640" MinHeight="560"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResize"
+        ShowInTaskbar="True"
+        Icon="/Assets/tray_active.ico"
+        Background="{DynamicResource WindowBg}">
+
+    <Window.Resources>
+        <!-- Colors — defaults are dark theme, overridden at runtime by ApplyTheme() -->
+        <SolidColorBrush x:Key="WindowBg">
+            <SolidColorBrush.Color>#FF1E1E1E</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="CardBg">
+            <SolidColorBrush.Color>#FF2A2A2A</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="BorderColor">
+            <SolidColorBrush.Color>#FF3A3A3A</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="TextPrimary">
+            <SolidColorBrush.Color>#FFF0F0F0</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="TextSecondary">
+            <SolidColorBrush.Color>#FF888888</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="TitleBg">
+            <SolidColorBrush.Color>#FF252525</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="SepColor">
+            <SolidColorBrush.Color>#FF333333</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="HotkeyBg">
+            <SolidColorBrush.Color>#FF333333</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="SliderTrack">
+            <SolidColorBrush.Color>#FF555555</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="ToggleOff">
+            <SolidColorBrush.Color>#FF555555</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="CornerBtnBg">
+            <SolidColorBrush.Color>#FF333333</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="TealColor">
+            <SolidColorBrush.Color>#FF1D9E75</SolidColorBrush.Color>
+        </SolidColorBrush>
+        <SolidColorBrush x:Key="TealLight">
+            <SolidColorBrush.Color>#FFE1F5EE</SolidColorBrush.Color>
+        </SolidColorBrush>
+
+        <!-- Card style -->
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBg}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <!-- Section label -->
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+            <Setter Property="Margin" Value="0,14,0,6"/>
+        </Style>
+
+        <!-- Row label -->
+        <Style x:Key="RowLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Row sub label -->
+        <Style x:Key="RowSub" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+            <Setter Property="Margin" Value="0,2,0,0"/>
+        </Style>
+
+        <!-- Toggle button style -->
+        <Style x:Key="ToggleBtn" TargetType="ToggleButton">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <Border x:Name="Track" CornerRadius="10" Background="{DynamicResource ToggleOff}"/>
+                            <Ellipse x:Name="Thumb" Width="16" Height="16"
+                                     Fill="White" HorizontalAlignment="Left" Margin="2,0,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Track" Property="Background" Value="#1D9E75"/>
+                                <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right"/>
+                                <Setter TargetName="Thumb" Property="Margin" Value="0,0,2,0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ComboBox style -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource HotkeyBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                Background="{DynamicResource HotkeyBg}"
+                                BorderBrush="{DynamicResource BorderColor}"
+                                BorderThickness="0.5"
+                                Foreground="{DynamicResource TextPrimary}"
+                                Padding="6,4"
+                                IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="3">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="20"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0" Margin="6,4" VerticalAlignment="Center"/>
+                                                <Path Grid.Column="1" Data="M 0,0 L 4,4 L 8,0 Z"
+                                                      Fill="#888888" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                                <ContentPresenter ContentSource="SelectionBoxItem" Margin="0"
+                                                  VerticalAlignment="Center"
+                                                  TextBlock.Foreground="{DynamicResource TextPrimary}"/>
+                            </ToggleButton>
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}">
+                                    <Border Background="{DynamicResource CardBg}"
+                                            BorderBrush="{DynamicResource BorderColor}"
+                                            BorderThickness="0.5" CornerRadius="3">
+                                        <ScrollViewer>
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="{DynamicResource CardBg}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                        <Setter Property="Padding" Value="8,5"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1D9E75"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#0F6E56"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Slider style -->
+        <Style TargetType="Slider">
+            <Setter Property="Foreground" Value="#1D9E75"/>
+        </Style>
+
+        <!-- Corner button style -->
+        <Style x:Key="CornerBtn" TargetType="Button">
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Background" Value="{DynamicResource CornerBtnBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource HotkeyBg}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CornerBtnActive" TargetType="Button" BasedOn="{StaticResource CornerBtn}">
+            <Setter Property="Background" Value="#0F3A2A"/>
+            <Setter Property="BorderBrush" Value="#1D9E75"/>
+            <Setter Property="Foreground" Value="#1D9E75"/>
+        </Style>
+
+        <!-- Action button -->
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Background" Value="{DynamicResource CornerBtnBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Hotkey box style -->
+        <Style x:Key="HotkeyBox" TargetType="TextBox">
+            <Setter Property="Background" Value="{DynamicResource HotkeyBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Clear hotkey button -->
+        <Style x:Key="ClearBtn" TargetType="Button">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Background" Value="#33A32D2D"/>
+            <Setter Property="Foreground" Value="#E24B4A"/>
+            <Setter Property="BorderBrush" Value="#55A32D2D"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="ToolTip" Value="Clear hotkey"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title bar -->
+        <Border Grid.Row="0" Background="{DynamicResource TitleBg}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0,0,0.5" Padding="16,10">
+            <Grid>
+                <TextBlock Text="MuteMaster — Settings" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                <Button Content="ⓘ  About" HorizontalAlignment="Right" VerticalAlignment="Center"
+                        FontSize="12" Foreground="#1D9E75" Background="Transparent" BorderThickness="0"
+                        Cursor="Hand" Click="AboutBtn_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- Scrollable content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16,4,16,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- LEFT COLUMN -->
+                <StackPanel Grid.Column="0">
+
+                    <!-- Audio Input -->
+                    <TextBlock Text="Audio — Input" Style="{StaticResource SectionLabel}"/>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <Grid Margin="0,4,0,8">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Microphone" Style="{StaticResource RowLabel}"/>
+                                    <TextBlock Text="Active input device" Style="{StaticResource RowSub}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ComboBox x:Name="InputDeviceCombo" Width="180"
+                                              SelectionChanged="InputDevice_Changed"/>
+                                    <Button Content="↻" Style="{StaticResource ActionBtn}" Margin="4,0,0,0"
+                                            Click="RefreshDevices_Click" ToolTip="Refresh device list"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,8"/>
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Push to talk" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="PushToTalkToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="PushToTalk_Changed" Unchecked="PushToTalk_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,8"/>
+                            <Grid Margin="0,0,0,8">
+                                <StackPanel>
+                                    <TextBlock Text="Toggle sound" Style="{StaticResource RowLabel}"/>
+                                    <TextBlock Text="Play sound on mute/unmute" Style="{StaticResource RowSub}"/>
+                                </StackPanel>
+                                <ToggleButton x:Name="ToggleSoundToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="ToggleSound_Changed" Unchecked="ToggleSound_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,8"/>
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Mute sound" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock x:Name="MuteSoundLabel" Text="Default" FontSize="11"
+                                               Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <Button Content="Browse…" Style="{StaticResource ActionBtn}" Click="BrowseMuteSound_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,8"/>
+                            <Grid>
+                                <TextBlock Text="Unmute sound" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock x:Name="UnmuteSoundLabel" Text="Default" FontSize="11"
+                                               Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <Button Content="Browse…" Style="{StaticResource ActionBtn}" Click="BrowseUnmuteSound_Click"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Audio Output -->
+                    <TextBlock Text="Audio — Output" Style="{StaticResource SectionLabel}"/>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <Grid Margin="0,4,0,8">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Speakers" Style="{StaticResource RowLabel}"/>
+                                    <TextBlock Text="Active output device" Style="{StaticResource RowSub}"/>
+                                </StackPanel>
+                                <ComboBox x:Name="OutputDeviceCombo" Grid.Column="1" Width="180"
+                                          SelectionChanged="OutputDevice_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Hotkeys -->
+                    <TextBlock Text="Hotkeys" Style="{StaticResource SectionLabel}"/>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <Grid Margin="0,2,0,6">
+                                <TextBlock Text="Mute mic" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBox x:Name="HotkeyMicBox" Style="{StaticResource HotkeyBox}"
+                                             GotFocus="HotkeyBox_GotFocus" PreviewKeyDown="HotkeyBox_KeyDown" Tag="HotKeyMuteMic"/>
+                                    <Button Style="{StaticResource ClearBtn}" Content="✕" Margin="4,0,0,0"
+                                            Click="ClearHotkey_Click" Tag="HotKeyMuteMic"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Mute output" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBox x:Name="HotkeyOutputBox" Style="{StaticResource HotkeyBox}"
+                                             GotFocus="HotkeyBox_GotFocus" PreviewKeyDown="HotkeyBox_KeyDown" Tag="HotKeyMuteOutput"/>
+                                    <Button Style="{StaticResource ClearBtn}" Content="✕" Margin="4,0,0,0"
+                                            Click="ClearHotkey_Click" Tag="HotKeyMuteOutput"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Toggle overlay" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBox x:Name="HotkeyOverlayBox" Style="{StaticResource HotkeyBox}"
+                                             GotFocus="HotkeyBox_GotFocus" PreviewKeyDown="HotkeyBox_KeyDown" Tag="HotKeyToggleOverlay"/>
+                                    <Button Style="{StaticResource ClearBtn}" Content="✕" Margin="4,0,0,0"
+                                            Click="ClearHotkey_Click" Tag="HotKeyToggleOverlay"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid>
+                                <TextBlock Text="Push to talk" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBox x:Name="HotkeyPTTBox" Style="{StaticResource HotkeyBox}"
+                                             GotFocus="HotkeyBox_GotFocus" PreviewKeyDown="HotkeyBox_KeyDown" Tag="HotKeyPushToTalk"/>
+                                    <Button Style="{StaticResource ClearBtn}" Content="✕" Margin="4,0,0,0"
+                                            Click="ClearHotkey_Click" Tag="HotKeyPushToTalk"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+                <!-- RIGHT COLUMN -->
+                <StackPanel Grid.Column="2">
+
+                    <!-- Overlay Appearance -->
+                    <TextBlock Text="Overlay — Appearance" Style="{StaticResource SectionLabel}"/>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <!-- Size -->
+                            <Grid Margin="0,2,0,6">
+                                <TextBlock Text="Size" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Slider x:Name="SizeSlider" Width="100" Minimum="30" Maximum="120" TickFrequency="1"
+                                            IsSnapToTickEnabled="True" ValueChanged="Size_Changed"/>
+                                    <TextBlock x:Name="SizeLabel" FontSize="12" Foreground="{DynamicResource TextSecondary}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0" Width="28"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <!-- Transparency -->
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Transparency" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Slider x:Name="TransparencySlider" Width="100" Minimum="10" Maximum="100" TickFrequency="1"
+                                            IsSnapToTickEnabled="True" ValueChanged="Transparency_Changed"/>
+                                    <TextBlock x:Name="TransparencyLabel" FontSize="12" Foreground="{DynamicResource TextSecondary}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0" Width="34"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <!-- Level bars -->
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Level bars" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="LevelBarsToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="LevelBars_Changed" Unchecked="LevelBars_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <!-- Auto hide -->
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Auto-hide overlay" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="AutoHideToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="AutoHide_Changed" Unchecked="AutoHide_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <!-- Click through -->
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Click-through" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="ClickThroughToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="ClickThrough_Changed" Unchecked="ClickThrough_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <!-- Follow monitor -->
+                            <Grid>
+                                <TextBlock Text="Follow cursor monitor" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="FollowMonitorToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="FollowMonitor_Changed" Unchecked="FollowMonitor_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Overlay Position -->
+                    <TextBlock Text="Overlay — Position" Style="{StaticResource SectionLabel}"/>
+                    <Border Style="{StaticResource Card}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Corner grid -->
+                            <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                <TextBlock Text="Snap to corner" Style="{StaticResource RowLabel}" Margin="0,0,0,8"/>
+                                <Grid Width="96" Height="80">
+                                    <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                    <Button x:Name="CornerTL" Grid.Row="0" Grid.Column="0" Content="TL" Margin="0,0,4,4"
+                                            Click="Corner_Click" Tag="TopLeft" FontSize="11" FontWeight="Medium"/>
+                                    <Button x:Name="CornerTR" Grid.Row="0" Grid.Column="1" Content="TR" Margin="4,0,0,4"
+                                            Click="Corner_Click" Tag="TopRight" FontSize="11" FontWeight="Medium"/>
+                                    <Button x:Name="CornerBL" Grid.Row="1" Grid.Column="0" Content="BL" Margin="0,4,4,0"
+                                            Click="Corner_Click" Tag="BottomLeft" FontSize="11" FontWeight="Medium"/>
+                                    <Button x:Name="CornerBR" Grid.Row="1" Grid.Column="1" Content="BR" Margin="4,4,0,0"
+                                            Click="Corner_Click" Tag="BottomRight" FontSize="11" FontWeight="Medium"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- Offset sliders -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="X offset" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Slider x:Name="OffsetXSlider" Width="90" Minimum="0" Maximum="100" TickFrequency="1"
+                                            IsSnapToTickEnabled="True" ValueChanged="OffsetX_Changed"/>
+                                    <TextBlock x:Name="OffsetXLabel" FontSize="12" Foreground="{DynamicResource TextSecondary}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0" Width="36"/>
+                                </StackPanel>
+                                <TextBlock Text="Y offset" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Slider x:Name="OffsetYSlider" Width="90" Minimum="0" Maximum="100" TickFrequency="1"
+                                            IsSnapToTickEnabled="True" ValueChanged="OffsetY_Changed"/>
+                                    <TextBlock x:Name="OffsetYLabel" FontSize="12" Foreground="{DynamicResource TextSecondary}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0" Width="36"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- System -->
+                    <TextBlock Text="System" Style="{StaticResource SectionLabel}"/>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <Grid Margin="0,2,0,6">
+                                <TextBlock Text="Autostart with Windows" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="AutostartToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="Autostart_Changed" Unchecked="Autostart_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="High process priority" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="HighPriorityToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="HighPriority_Changed" Unchecked="HighPriority_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Minimize to tray" Style="{StaticResource RowLabel}"/>
+                                <ToggleButton x:Name="MinimizeToTrayToggle" Style="{StaticResource ToggleBtn}"
+                                              HorizontalAlignment="Right" Checked="MinimizeToTray_Changed" Unchecked="MinimizeToTray_Changed"/>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Theme" Style="{StaticResource RowLabel}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <RadioButton x:Name="ThemeLight" Content="Light" Foreground="{DynamicResource TextPrimary}"
+                                                 Margin="0,0,12,0" Checked="Theme_Changed" Tag="Light"/>
+                                    <RadioButton x:Name="ThemeDark" Content="Dark" Foreground="{DynamicResource TextPrimary}"
+                                                 Checked="Theme_Changed" Tag="Dark"/>
+                                </StackPanel>
+                            </Grid>
+                            <Separator Background="{DynamicResource BorderColor}" Height="0.5" Margin="0,0,0,6"/>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Settings file" Style="{StaticResource RowLabel}"/>
+                                    <TextBlock Text="Import / Export config" Style="{StaticResource RowSub}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Content="Import" Style="{StaticResource ActionBtn}" Margin="0,0,6,0" Click="ImportSettings_Click"/>
+                                    <Button Content="Export" Style="{StaticResource ActionBtn}" Click="ExportSettings_Click"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="{DynamicResource TitleBg}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0.5,0,0" Padding="16,8">
+            <TextBlock Text="Developed by Muhtasim Mahbub  |  3M Design Solutions"
+                       FontSize="11" Foreground="{DynamicResource TextSecondary}"
+                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>
