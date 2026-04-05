@@ -1,0 +1,35 @@
+# Build output
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+Properties/PublishProfiles/
+
+# Publish output
+publish/
+
+# Debug symbols
+*.pdb
+
+# NuGet packages (restored automatically on build)
+packages/
+*.nupkg
+*.nuget.props
+*.nuget.targets
+
+# User-specific settings
+launchSettings.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Rider IDE
+.idea/
