@@ -1,6 +1,6 @@
 # MuteMaster
 
-> A lightweight Windows utility for instant, system-wide microphone and speaker mute control — with a customizable overlay, real-time mic level visualization, and fully configurable hotkeys.
+> A lightweight Windows utility for instant, system-wide microphone and speaker mute control with a customizable overlay, real-time mic level visualization, and fully configurable hotkeys.
 
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-blue)
 ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)
@@ -22,7 +22,7 @@
 
 ## Overview
 
-MuteMaster gives you instant, OS-level control over your microphone and speakers from anywhere on your system — no matter which app is in focus. A minimal always-on-top overlay shows your current mute status at a glance, with real-time mic level bars and fully customizable hotkeys including support for single keys, combos, and mouse side buttons.
+MuteMaster gives you instant, OS-level control over your microphone and speakers from anywhere on your system, no matter which app is in focus. A minimal always-on-top overlay shows your current mute status at a glance, with real-time mic level bars and fully customizable hotkeys including support for single keys, combos, and mouse side buttons.
 
 Built with .NET 9 and WPF for native Windows performance, MuteMaster runs quietly in your system tray and uses minimal CPU and memory at idle.
 
@@ -32,17 +32,17 @@ Built with .NET 9 and WPF for native Windows performance, MuteMaster runs quietl
 
 **[⬇ Download MuteMaster v1.0.0](https://github.com/mmatul06/MuteMaster/releases/latest)**
 
-Extract the zip and run `MuteMaster.exe` — no installer required.
+Extract the zip and run `MuteMaster.exe`. No installer required.
 
 ---
 
 ## Features
 
 ### Audio Control
-- Global microphone mute/unmute — affects all apps system-wide via Windows Core Audio (WASAPI)
+- Global microphone mute/unmute: Affects all apps system-wide via Windows Core Audio (WASAPI)
 - Global speaker/output device mute/unmute
 - Choose specific input and output devices independently, or use Windows Default
-- Push to talk mode — hold a key to unmute, release to remute
+- Push to talk mode: Hold a key to unmute, release to remute
 - Separate custom sounds for mute and unmute, with built-in default beep
 
 ### Overlay
@@ -51,9 +51,9 @@ Extract the zip and run `MuteMaster.exe` — no installer required.
 - Push to talk indicator badge on overlay
 - Fully adjustable size and transparency
 - Snap to any screen corner (TL, TR, BL, BR) with X/Y offset fine-tuning
-- Click-through mode — overlay never intercepts mouse clicks
-- Auto-hide mode — fades when mic is active, briefly appears on toggle
-- Multi-monitor support — overlay follows cursor to active monitor
+- Click-through mode: Overlay never intercepts mouse clicks
+- Auto-hide mode: Fades when mic is active, briefly appears on toggle
+- Multi-monitor support. Overlay follows cursor to active monitor
 
 ### Hotkeys
 - Fully customizable hotkeys for mic mute, speaker mute, overlay toggle, and push to talk
@@ -62,7 +62,7 @@ Extract the zip and run `MuteMaster.exe` — no installer required.
 - All hotkeys work globally regardless of which application is in focus
 
 ### Settings
-- Clean single-page settings window — light and dark theme
+- Clean single-page settings window; Light and Dark theme
 - Refresh button to detect newly connected audio devices
 - Import and export full settings as a JSON config file
 - Minimize to system tray on close
@@ -91,7 +91,7 @@ All hotkeys are fully remappable in Settings.
 2. Download `MuteMaster-v1.0.0-win-x64.zip`
 3. Extract the zip to any folder (e.g. `C:\Tools\MuteMaster\`)
 4. Run `MuteMaster.exe`
-5. MuteMaster appears in your system tray — right-click for options or double-click to open Settings
+5. MuteMaster appears in your system tray. Right-click for options or double-click to open Settings
 
 Settings are saved automatically to `%AppData%\MuteMaster\settings.json`.
 
@@ -103,7 +103,7 @@ Settings are saved automatically to `%AppData%\MuteMaster\settings.json`.
 |---|---|
 | Operating System | Windows 10 or Windows 11 (64-bit) |
 | Architecture | x64 |
-| Runtime | None — self-contained |
+| Runtime | None (self-contained) |
 | RAM | ~10 MB at idle |
 | Disk Space | ~180 MB (includes bundled runtime) |
 
